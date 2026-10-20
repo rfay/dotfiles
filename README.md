@@ -38,6 +38,44 @@ export MSYS=winsymlinks:nativestrict
 
 `link.sh` will warn if it detects git-bash without that variable set.
 
+## Clones from before October 20, 2026
+
+On October 20, 2026 this repo's history was replaced with a single new commit
+on `main`, because the old history contained leaked credentials. The old
+history is kept privately as `rfay/dotfiles.old`. On a clone made before then,
+`git pull` fails with one of these:
+
+```text
+fatal: refusing to merge unrelated histories
+Your configuration specifies to merge with the ref 'refs/heads/master'
+from the remote, but no such ref was fetched.
+```
+
+To bring that clone up to date:
+
+```bash
+cd ~/workspace/dotfiles                   # wherever the clone lives
+git log --oneline --branches --not --remotes   # commits never pushed
+git status --short                        # uncommitted changes
+```
+
+Copy aside anything either command lists that you want to keep, because the
+next steps discard it. Then:
+
+```bash
+git fetch --prune origin
+git checkout -f -B main origin/main
+git branch -D master
+git stash clear
+git reflog expire --expire=now --all && git gc --prune=now
+./link.sh
+```
+
+The `reflog`/`gc` step deletes the old history, credentials included, from
+that machine. `link.sh` turns on the pre-commit hook that came with the new
+history. The links it made before still point to the same paths, so nothing
+else changes.
+
 ## How the shell rc files are wired up
 
 Most files in this repo (`.gitconfig`, `.oh-my-zsh`, the scripts in `bin/`,

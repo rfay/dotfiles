@@ -100,7 +100,11 @@ committing here.
 
 **This repo is public.** Its earlier history was discarded (kept privately as
 `rfay/dotfiles.old`) because a linked `.claude.json` had committed GitHub and
-Upsun tokens along with Claude prompt history.
+Upsun tokens along with Claude prompt history. A clone from before that fails
+`git pull` with "refusing to merge unrelated histories" or "no such ref was
+fetched"; README.md's "Clones from before October 20, 2026" has the recovery
+steps. Show the user any unpushed commits or uncommitted changes and get
+confirmation before running them, since they discard both.
 
 - Never commit secrets. They go in `~/.bash_secrets`, which the shell files
   source. `~/.bash_secrets`, `~/.shell-extra`, and `~/.gitconfig.local` are
