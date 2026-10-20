@@ -7,6 +7,14 @@ Here are the bash, zsh, gitconfig, related dotfiles for rfay.
 1. Clone this repository
 2. Run `./link.sh` to create symlinks and wire up shell startup files
 3. Create `~/.bash_secrets` with your API tokens/secrets (see `.bash_secrets.example`)
+4. Optionally create `~/.shell-extra` and `~/.gitconfig.local` for
+   per-machine settings (see `.shell-extra.example` and
+   `.gitconfig.local.example`)
+
+This repo is public. `link.sh` sets `core.hooksPath` so that
+`githooks/pre-commit` refuses commits that add token-shaped strings, private
+keys, or files such as `.claude.json`. It uses `gitleaks` as well when that
+is installed. For a false positive, commit with `--no-verify`.
 
 `link.sh` is safe to re-run any time (e.g. after `git pull`, or after adding a
 new item to `LINKITEMS`) — it never overwrites something it doesn't recognize

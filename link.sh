@@ -35,6 +35,10 @@ case "$OSTYPE" in
     ;;
 esac
 
+# Hooks don't travel with a clone, so turn on the secret-blocking
+# pre-commit hook here. This repo is public.
+git -C "$DIR" config core.hooksPath githooks
+
 mkdir -p ~/bin ~/.ssh
 chmod 700 ~/.ssh
 set -x

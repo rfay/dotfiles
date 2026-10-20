@@ -19,3 +19,5 @@ web/sites/default/files
 .taskmaster
 .bash_secrets
 .zsh_secrets
+.shell-extra
+.gitconfig.local

@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# Blocks commits that add credentials. This repo is public, and its old
+# history had to be thrown away after tokens were committed. link.sh points
+# core.hooksPath here. For a false positive: git commit --no-verify
+
+status=0
+
+# Files that hold secrets by nature, whatever their contents.
+blocked_files=$(git diff --cached --name-only --diff-filter=ACR | grep -E \
+  '(^|/)(\.claude\.json|\.bash_secrets|\.zsh_secrets|\.gitconfig\.local|\.shell-extra|id_(rsa|ecdsa|ed25519))$|\.(p12|pfx|pem|key)$')
+if [ -n "$blocked_files" ]; then
+  echo "pre-commit: refusing to commit files that hold secrets:" >&2
+  echo "$blocked_files" | sed 's/^/  /' >&2
+  status=1
+fi
+
+# Added lines only, so existing text is not re-reported. .oh-my-zsh is
+# vendored upstream code.
+added=$(git diff --cached -U0 --diff-filter=ACMR -- . ':(exclude).oh-my-zsh' | grep -E '^\+[^+]')
+
+patterns='(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}'
+patterns+='|github_pat_[A-Za-z0-9_]{22,}'
+patterns+='|bkua_[a-f0-9]{40}'
+patterns+='|sk-ant-[A-Za-z0-9_-]{20,}'
+patterns+='|AKIA[0-9A-Z]{16}'
+patterns+='|xox[abprs]-[A-Za-z0-9-]{10,}'
+patterns+='|-----BEGIN ([A-Z]+ )?PRIVATE KEY-----'
+# Apple app-specific passwords
+patterns+='|[^a-z][a-z]{4}-[a-z]{4}-[a-z]{4}-[a-z]{4}([^a-z]|$)'
+# A long literal assigned to something named like a secret; placeholders
+# and variable references are filtered out below.
+patterns+='|(password|passwd|secret|token|api[_-]?key)[A-Za-z_-]*["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9/+_.-]{16,}'
+
+hits=$(echo "$added" | grep -i -E "$patterns" | grep -v -i -E 'your_|_here|example|placeholder|\$\{?[A-Za-z_]')
+if [ -n "$hits" ]; then
+  echo "pre-commit: these added lines look like credentials:" >&2
+  echo "$hits" | cut -c1-160 | sed 's/^/  /' >&2
+  status=1
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner || status=1
+fi
+
+if [ $status -ne 0 ]; then
+  echo "Put secrets in ~/.bash_secrets instead. If this is a false positive," >&2
+  echo "commit with --no-verify." >&2
+fi
+exit $status

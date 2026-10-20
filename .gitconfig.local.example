@@ -4,8 +4,8 @@
 # (both of which are synced via the dotfiles repo), so settings here
 # override the shared config for this machine only.
 #
-# This file is listed in dotfiles/.gitignore and should NOT be committed
-# to the dotfiles repo. Create it manually on each machine that needs overrides.
+# This is a template. Copy the parts you need to ~/.gitconfig.local on each
+# machine that needs overrides; the real file is never committed.
 #
 # -----------------------------------------------------------------------
 # COMMON USE CASES
@@ -31,7 +31,7 @@
 #
 # [gpg "ssh"]
 # 	program = /usr/bin/ssh-keygen
-# 	allowedSignersFile = /home/rfay/.ssh/allowed_signers
+# 	allowedSignersFile = ~/.ssh/allowed_signers
 #
 # -----------------------------------------------------------------------
 #

@@ -43,8 +43,8 @@ use `~` or `$HOME`.
 
 `.gitconfig` is shared by all of them. Machine-specific git settings go in
 `~/.gitconfig.local`, which `.gitconfig` includes last. That file is real and
-per-machine; the tracked `.gitconfig.local` at the repo root is only a
-commented template and is not linked. `.gitconfig.linux` is pulled in by
+per-machine; the tracked `.gitconfig.local.example` is only a commented
+template and is not linked. `.gitconfig.linux` is pulled in by
 `includeIf "gitdir:/home/"`, which only fires inside a repo — it does not
 apply to `git clone` or to commands run outside a repo.
 
@@ -98,9 +98,20 @@ committing here.
 
 ## Secrets
 
-Never commit secrets. `~/.bash_secrets`, `~/.shell-extra`, and
-`~/.gitconfig.local` are machine-local; `.bash_secrets.example` is the
-template.
+**This repo is public.** Its earlier history was discarded (kept privately as
+`rfay/dotfiles.old`) because a linked `.claude.json` had committed GitHub and
+Upsun tokens along with Claude prompt history.
+
+- Never commit secrets. They go in `~/.bash_secrets`, which the shell files
+  source. `~/.bash_secrets`, `~/.shell-extra`, and `~/.gitconfig.local` are
+  machine-local; the tracked `*.example` files are their templates.
+- **Never link a file into this repo that a program writes to by itself**
+  (`~/.claude.json`, `~/.claude/settings.json`, IDE state, shell history).
+  Only link files that change when a person edits them in the repo.
+- `githooks/pre-commit` blocks commits that add token-shaped strings,
+  private keys, or files like `.claude.json`; `link.sh` turns it on with
+  `core.hooksPath`. Don't bypass it with `--no-verify` unless the user
+  confirms the match is a false positive.
 
 ## Git workflow
 
