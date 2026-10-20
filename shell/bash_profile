@@ -1,0 +1,102 @@
+# Windows support; doesn't matter except there
+export MSYS=winsymlinks:nativestrict
+# Claude Code (a native Windows process) needs a Windows path to Git's bash.exe
+if command -v cygpath >/dev/null 2>&1; then
+  export CLAUDE_CODE_GIT_BASH_PATH="$(cygpath -w /)bin\\bash.exe"
+fi
+
+export GOTEST_SHORT=12
+export DOCKER_SCAN_SUGGEST=false
+export DOCKER_SCOUT_SUGGEST=false
+export HOMEBREW_NO_ASK=true
+
+# Set PATH before sourcing ~/.bashrc below, since it looks up tools (e.g. ddev) on PATH for completions
+export GOPATH=$HOME/go
+export PATH=/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH:$GOPATH/bin
+
+# git-bash: 1Password's SSH agent is a Windows named pipe that only Windows
+# OpenSSH can talk to, so put it ahead of git-bash's bundled ssh. git itself
+# is pointed at it via core.sshCommand in ~/.gitconfig.local (see link.sh).
+case "$OSTYPE" in
+  msys|cygwin)
+    [ -x /c/Windows/System32/OpenSSH/ssh.exe ] && export PATH="/c/Windows/System32/OpenSSH:$PATH"
+    ;;
+esac
+
+if [ -f /usr/share/bash-completion/bash_completion ]; then  . /usr/share/bash-completion/bash_completion; fi
+
+[ -d /home/linuxbrew/.linuxbrew/bin ] && export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+[ -d /opt/homebrew/bin ] && export PATH="/opt/homebrew/bin:$PATH"
+
+# Homebrew setup, should work for homebrew on macOs or Linux
+if command -v brew >/dev/null 2>&1 ; then
+  # Linuxbrew and homebrew bash completion additions
+  [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+fi
+
+[ -r "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+
+#source ~/kube-prompt.sh
+
+# autojump is like 'z'
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+[ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
+[ -f /usr/share/autojump/autojump.sh ] && . /usr/share/autojump/autojump.sh
+
+# For macOS, silence deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+export GOTEST_SHORT=true
+
+# Add private things that can't be in here
+[ -r "$HOME/.shell-extra" ] && source "$HOME/.shell-extra"
+
+# For systems with no agent already going, can source it here.
+#[ -r ~/.bash_sshagent ] && source ~/.bash_sshagent
+
+# BEGIN SNIPPET: Platform.sh CLI configuration
+# HOME=${HOME:-'/Users/rfay'}
+# export PATH="$HOME/"'.platformsh/bin':"$PATH"
+# if [ -f "$HOME/"'.platformsh/shell-config.rc' ]; then . "$HOME/"'.platformsh/shell-config.rc'; fi # END SNIPPET
+
+#PATH="~/.ddev/.bin:$PATH"
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+
+
+#export CC='ccache clang'
+#export CXX='ccache clang++'
+#export CCACHE_CPP2=yes
+
+if command -v keychain >/dev/null ; then
+  /usr/bin/keychain
+  source "$HOME/.keychain/$HOSTNAME-sh"
+fi
+
+# Added by OrbStack: command-line tools and integration
+source "$HOME/.orbstack/shell/init.bash" 2>/dev/null || :
+
+# Detect WSL2 from the kernel, because login(1) shells, including the one WSL
+# opens at startup, don't inherit WSL_DISTRO_NAME.
+is_wsl=""
+grep -qsi microsoft /proc/version && is_wsl=1
+
+if [ -n "$is_wsl" ]; then
+  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig-wsl2"
+fi
+
+# Created by `pipx` on 2025-03-23 17:41:41
+export PATH="$PATH:${HOME}/.local/bin"
+
+if [ -d ${HOME}/.rd ]; then export PATH="$PATH:${HOME}/.rd/bin"; fi
+
+for p in "/Applications/1Password.app/Contents/MacOS/" "/mnt/c/Users/randy/AppData/Local/1Password/app/8/" "/opt/1Password"; do
+  if [ -d $p ]; then
+    export PATH="$PATH:$p"; 
+  fi
+done
+
+# 1Password SSH agent, shared with zsh
+_dotfiles_shell_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[ -r "${_dotfiles_shell_dir}/ssh_agent" ] && source "${_dotfiles_shell_dir}/ssh_agent"
+unset _dotfiles_shell_dir
+

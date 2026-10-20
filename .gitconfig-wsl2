@@ -1,0 +1,97 @@
+[user]
+	name = Randy Fay
+	email = randy@randyfay.com
+	mail = randy@randyfay.com
+    signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVC6j7OrO0FRP5k8Hxl6RLKMaQeB+I+MtPVKvG4QmfHUnwMHcp1yd3Q8wN7gdEhmt/9Ht1Dr3Uow5SJBi4wttflPJJ1MjxXFqiQYiVQ0T8f2yX77U2VtpDVYe9+A44xnLXJLzl11D/WRb69GL9z+hyceEM9hV1i+nX3xrw8x+z2bf96f0E2w8dBWVjsCWh9YGA4dmMgtgQpJt86hvMMSHxxPeuiJg/wY4BSLoo1i19V/VOnLhG/NroOVcKnGYH/RX/UPDVGSfwFC6yFm51fhNRM1LTdrHrBa8RkbWhDxBm+ECUhEXoeDx4Q5STKOnznsWDktP1XVC67vOkdQAHL5hLVGqt9MTB1cV+T2hGXR0iUYK22OKMt1oLcm9rp1rOZctZSDFj1Cc+5+svK82xv3tYIBegw5YbrLQX/fGqJ8gnCIDIhL2Uc16B3kEdrGTs0Ks0qWlsA0CbKAmsW/Mjf1aEMr2KIsd/lfNqoLP6NSdyPtlXxT56TAIbOP1glSzoLsibwqbD9SJqAoFl4iDPB9RyK00QlQgAgEUrvWpPu/U+o4K7+ajBpssIskmK+wZ+JKDxqotVd99cJkxhWF02l+WsiqSw6VFFtCiXuTiJEoTe5nARWJbXdXoXAAQ+Sd7wIc/47ov0IqoiuJ4NbIafL8BmAzB/oUkRPfKac16jHp4LNw==
+
+[core]
+	editor = vim
+	autocrlf = false
+	excludesfile = ~/.gitignore
+	filemode = true
+	eol = lf
+
+[push]
+	default = tracking
+	autoSetupRemote = true
+	autoSetupRemote = true
+[color]
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto
+[merge]
+        keepBackup = false
+	tool = p4merge
+[diff]
+	tool = goland
+[difftool]
+; This setting is optional, but prevents an annoying prompt between diffing files.
+	prompt = false
+[difftool "goland"]
+; Putting this path here doesn't work. I would love to know why.
+	cmd = /Applications/Goland.app/Contents/MacOS/goland diff $(cd $(dirname $LOCAL) && pwd)/$(basename $LOCAL) $(cd $(dirname $REMOTE) && pwd)/$(basename $REMOTE)
+	trustExitCode = true
+	keepTemporaries = false
+	keepBackup = false
+[mergetool "goland"]
+	cmd = /Applications/Goland.app/Contents/MacOS/goland merge $(cd $(dirname $LOCAL) && pwd)/$(basename $LOCAL) $(cd $(dirname $REMOTE) && pwd)/$(basename $REMOTE) $(cd $(dirname $BASE) && pwd)/$(basename $BASE) $(cd $(dirname $MERGED) && pwd)/$(basename $MERGED)
+	trustExitCode = true
+	keepTemporaries = false
+	keepBackup = false
+
+
+[mergetool "p4merge"]
+	cmd = p4merge.exe -le unix $BASE $LOCAL $REMOTE $MERGED
+	keepTemporaries = false
+	trustExitCode = false
+	keepBackup = false
+#[url "git@github.com:"]
+	#insteadOf = https://github.com/
+[status]
+	submoduleSummary = true
+[fetch]
+	recurseSubmodules = on-demand
+[hub]
+	protocol = ssh
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	required = true
+	clean = git-lfs clean -- %f
+	process = git-lfs filter-process
+[filesystem "Oracle Corporation|13.0.1|/dev/disk1s5"]
+	timestampResolution = 10000 nanoseconds
+	minRacyThreshold = 0 nanoseconds
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[rerere]
+	enabled = true
+
+[safe]
+	directory = *
+
+[gpg]
+  format = ssh
+
+[user]
+  signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVC6j7OrO0FRP5k8Hxl6RLKMaQeB+I+MtPVKvG4QmfHUnwMHcp1yd3Q8wN7gdEhmt/9Ht1Dr3Uow5SJBi4wttflPJJ1MjxXFqiQYiVQ0T8f2yX77U2VtpDVYe9+A44xnLXJLzl11D/WRb69GL9z+hyceEM9hV1i+nX3xrw8x+z2bf96f0E2w8dBWVjsCWh9YGA4dmMgtgQpJt86hvMMSHxxPeuiJg/wY4BSLoo1i19V/VOnLhG/NroOVcKnGYH/RX/UPDVGSfwFC6yFm51fhNRM1LTdrHrBa8RkbWhDxBm+ECUhEXoeDx4Q5STKOnznsWDktP1XVC67vOkdQAHL5hLVGqt9MTB1cV+T2hGXR0iUYK22OKMt1oLcm9rp1rOZctZSDFj1Cc+5+svK82xv3tYIBegw5YbrLQX/fGqJ8gnCIDIhL2Uc16B3kEdrGTs0Ks0qWlsA0CbKAmsW/Mjf1aEMr2KIsd/lfNqoLP6NSdyPtlXxT56TAIbOP1glSzoLsibwqbD9SJqAoFl4iDPB9RyK00QlQgAgEUrvWpPu/U+o4K7+ajBpssIskmK+wZ+JKDxqotVd99cJkxhWF02l+WsiqSw6VFFtCiXuTiJEoTe5nARWJbXdXoXAAQ+Sd7wIc/47ov0IqoiuJ4NbIafL8BmAzB/oUkRPfKac16jHp4LNw==
+
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = "/mnt/c/Users/rfay/AppData/Local/Microsoft/WindowsApps/op-ssh-sign-wsl.exe"
+
+[commit]
+  gpgsign = true
+
+[include]
+	path = ~/.gitconfig.local

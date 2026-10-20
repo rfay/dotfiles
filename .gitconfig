@@ -1,0 +1,93 @@
+[user]
+	name = Randy Fay
+	email = randy@randyfay.com
+	mail = randy@randyfay.com
+
+[core]
+	editor = vim
+	autocrlf = false
+	excludesfile = ~/.gitignore
+	filemode = true
+	eol = lf
+	# for WSL2
+	#sshCommand = ssh.exe
+
+[push]
+	default = tracking
+	autoSetupRemote = true
+	autoSetupRemote = true
+[color]
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto
+[merge]
+        keepBackup = false
+	tool = p4merge
+[diff]
+	tool = goland
+	renameLimit = 10909
+[difftool]
+; This setting is optional, but prevents an annoying prompt between diffing files.
+	prompt = false
+[difftool "goland"]
+; Putting this path here doesn't work. I would love to know why.
+	cmd = /Applications/Goland.app/Contents/MacOS/goland diff $(cd $(dirname $LOCAL) && pwd)/$(basename $LOCAL) $(cd $(dirname $REMOTE) && pwd)/$(basename $REMOTE)
+	trustExitCode = true
+	keepTemporaries = false
+	keepBackup = false
+[mergetool "goland"]
+	cmd = /Applications/Goland.app/Contents/MacOS/goland merge $(cd $(dirname $LOCAL) && pwd)/$(basename $LOCAL) $(cd $(dirname $REMOTE) && pwd)/$(basename $REMOTE) $(cd $(dirname $BASE) && pwd)/$(basename $BASE) $(cd $(dirname $MERGED) && pwd)/$(basename $MERGED)
+	trustExitCode = true
+	keepTemporaries = false
+	keepBackup = false
+
+
+[mergetool "p4merge"]
+	cmd = p4merge -le unix $BASE $LOCAL $REMOTE $MERGED
+	keepTemporaries = false
+	trustExitCode = false
+	keepBackup = false
+[status]
+	submoduleSummary = true
+[fetch]
+	recurseSubmodules = on-demand
+[hub]
+	protocol = ssh
+[filesystem "Oracle Corporation|13.0.1|/dev/disk1s5"]
+	timestampResolution = 10000 nanoseconds
+	minRacyThreshold = 0 nanoseconds
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[commit]
+	gpgsign = true
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
+[user]
+  signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVC6j7OrO0FRP5k8Hxl6RLKMaQeB+I+MtPVKvG4QmfHUnwMHcp1yd3Q8wN7gdEhmt/9Ht1Dr3Uow5SJBi4wttflPJJ1MjxXFqiQYiVQ0T8f2yX77U2VtpDVYe9+A44xnLXJLzl11D/WRb69GL9z+hyceEM9hV1i+nX3xrw8x+z2bf96f0E2w8dBWVjsCWh9YGA4dmMgtgQpJt86hvMMSHxxPeuiJg/wY4BSLoo1i19V/VOnLhG/NroOVcKnGYH/RX/UPDVGSfwFC6yFm51fhNRM1LTdrHrBa8RkbWhDxBm+ECUhEXoeDx4Q5STKOnznsWDktP1XVC67vOkdQAHL5hLVGqt9MTB1cV+T2hGXR0iUYK22OKMt1oLcm9rp1rOZctZSDFj1Cc+5+svK82xv3tYIBegw5YbrLQX/fGqJ8gnCIDIhL2Uc16B3kEdrGTs0Ks0qWlsA0CbKAmsW/Mjf1aEMr2KIsd/lfNqoLP6NSdyPtlXxT56TAIbOP1glSzoLsibwqbD9SJqAoFl4iDPB9RyK00QlQgAgEUrvWpPu/U+o4K7+ajBpssIskmK+wZ+JKDxqotVd99cJkxhWF02l+WsiqSw6VFFtCiXuTiJEoTe5nARWJbXdXoXAAQ+Sd7wIc/47ov0IqoiuJ4NbIafL8BmAzB/oUkRPfKac16jHp4LNw==
+
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = "op-ssh-sign"
+
+[commit]
+  gpgsign = true
+
+
+[rerere]
+	enabled = true
+[safe]
+	directory =
+# On plain Linux, GIT_CONFIG_GLOBAL is not set and repos live under /home/.
+# WSL2 sets GIT_CONFIG_GLOBAL=~/.gitconfig-wsl2 (via .bash_profile), so it
+# never reads this file and the includeIf below won't fire there.
+# macOS repos live under /Users/, so it also won't fire there.
+[includeIf "gitdir:/home/"]
+	path = ~/.gitconfig.linux
+
+[include]
+	path = ~/.gitconfig.local

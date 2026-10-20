@@ -1,0 +1,50 @@
+# ~/.gitconfig.local — machine-specific git overrides
+#
+# This file is included at the end of ~/.gitconfig and ~/.gitconfig-wsl2
+# (both of which are synced via the dotfiles repo), so settings here
+# override the shared config for this machine only.
+#
+# This file is listed in dotfiles/.gitignore and should NOT be committed
+# to the dotfiles repo. Create it manually on each machine that needs overrides.
+#
+# -----------------------------------------------------------------------
+# COMMON USE CASES
+# -----------------------------------------------------------------------
+#
+# 1. Disable commit signing on machines without 1Password / op-ssh-sign
+#    (e.g. Linux servers, CI hosts, WSL without the Windows op-ssh-sign-wsl.exe):
+#
+# [commit]
+# 	gpgsign = false
+#
+# -----------------------------------------------------------------------
+#
+# 2. Use a different email for work machines:
+#
+# [user]
+# 	email = randy@example-corp.com
+#
+# -----------------------------------------------------------------------
+#
+# 3. Use a different SSH key for signing (when op-ssh-sign is unavailable
+#    but you still want signed commits via ssh-keygen):
+#
+# [gpg "ssh"]
+# 	program = /usr/bin/ssh-keygen
+# 	allowedSignersFile = /home/rfay/.ssh/allowed_signers
+#
+# -----------------------------------------------------------------------
+#
+# 4. Override the default editor on a machine-specific basis:
+#
+# [core]
+# 	editor = nano
+#
+# -----------------------------------------------------------------------
+#
+# 5. Proxy settings for corporate networks:
+#
+# [http]
+# 	proxy = http://proxy.example.com:8080
+#
+# -----------------------------------------------------------------------

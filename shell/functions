@@ -1,0 +1,19 @@
+# Shell functions shared by bash and zsh. Sourced from shell/bashrc and
+# shell/zshrc; keep everything here portable between the two.
+
+# Interactively remove one or more git worktrees (multi-select with TAB).
+wtrm() {
+  local dirs
+  dirs=$(git worktree list | fzf -m | awk '{print $1}')
+  [ -z "$dirs" ] && return
+  echo "$dirs" | while read -r d; do
+    git worktree remove "$d" 2>/dev/null || git worktree remove --force "$d"
+  done
+}
+
+# Interactively cd to a git worktree.
+wtcd() {
+  local dir
+  dir=$(git worktree list | fzf | awk '{print $1}')
+  [ -n "$dir" ] && cd "$dir"
+}

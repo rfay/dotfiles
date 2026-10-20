@@ -1,0 +1,21 @@
+.project
+.buildpath
+.settings
+nbproject/
+.idea
+.DS_Store
+db/db_*
+sites/default/files
+*.orig
+*.rej
+.tarballs
+web/sites/default/files
+.claude
+~/.claude
+# ".claude" above does not cover these: Claude Code drops a .claude.json
+# holding machine-local config, plus .claude.json.tmp.* scratch files.
+.claude.json
+.claude.json.tmp.*
+.taskmaster
+.bash_secrets
+.zsh_secrets

@@ -1,0 +1,21 @@
+# Point SSH_AUTH_SOCK at the 1Password SSH agent. Sourced by both
+# shell/bash_profile and shell/zshrc, so keep it to bash 3.2 / zsh syntax.
+# ssh itself is also covered by IdentityAgent in ~/.ssh/config, but ssh-add,
+# DDEV, and other tools only read SSH_AUTH_SOCK.
+
+# macOS: 1Password serves the agent itself, at a path its docs give. Without
+# this, SSH_AUTH_SOCK stays at launchd's empty built-in agent.
+_op_sock="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+if [[ "$OSTYPE" == darwin* ]]; then
+  [ -S "$_op_sock" ] && export SSH_AUTH_SOCK="$_op_sock"
+# WSL2: socat + npiperelay.exe serve the Windows agent's named pipe.
+# Detect it from the kernel, since login shells don't inherit WSL_DISTRO_NAME.
+elif grep -qsi microsoft /proc/version; then
+  [ -S "$HOME/.1password/agent.sock" ] && export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
+# Parallels: enable the bridge only if the Mac host listener is reachable
+elif [ -f "/etc/os-release" ] && grep -qi "ubuntu" /etc/os-release; then
+  if timeout 0.5 bash -c "</dev/tcp/10.211.55.2/2222" 2>/dev/null; then
+    export SSH_AUTH_SOCK="$HOME/.1password-agent.sock"
+  fi
+fi
+unset _op_sock

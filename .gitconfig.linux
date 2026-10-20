@@ -1,0 +1,30 @@
+# Applied on plain Linux hosts via [includeIf "gitdir:/home/"] in ~/.gitconfig.
+#
+# op-ssh-sign (1Password) is macOS-only, so ~/.gitconfig's `program = op-ssh-sign`
+# makes every commit on Linux die with "cannot run op-ssh-sign: No such file or
+# directory". Most Linux hosts here don't have the signing key at all, so signing
+# stays OFF by default: being able to commit matters more than signing.
+#
+# Two things are still set below, because neither can block a commit:
+#
+#   program = ssh-keygen        Signing via ssh-agent, used only when signing is
+#                               turned on. Nothing runs it while gpgsign = false.
+#   allowedSignersFile          Verification only. ~/.gitconfig points this at a
+#                               /Users/... path that doesn't exist on Linux, which
+#                               makes `git log --show-signature` report bad or
+#                               unverifiable signatures on perfectly good commits.
+#
+# On a Linux host whose ssh-agent DOES carry the signing key (forwarded, or served
+# by the 1Password bridge), turn signing on for that machine alone in
+# ~/.gitconfig.local, which is per-host and included after this file:
+#
+#     [commit]
+#         gpgsign = true
+#
+# Check first: ssh-add -L | grep -qF "$(git config user.signingkey | awk '{print $2}')"
+[commit]
+	gpgsign = false
+
+[gpg "ssh"]
+	program = ssh-keygen
+	allowedSignersFile = ~/.ssh/allowed_signers
