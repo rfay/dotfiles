@@ -38,6 +38,17 @@ esac
 # Hooks don't travel with a clone, so turn on the secret-blocking
 # pre-commit hook here. This repo is public.
 git -C "$DIR" config core.hooksPath githooks
+# The hook falls back to its own patterns without gitleaks, but gitleaks
+# knows far more token formats.
+if ! command -v gitleaks >/dev/null 2>&1; then
+  case "$OSTYPE" in
+    darwin*) gitleaks_install="brew install gitleaks" ;;
+    msys|cygwin) gitleaks_install="winget install Gitleaks.Gitleaks" ;;
+    *) gitleaks_install="sudo apt install gitleaks (or brew install gitleaks)" ;;
+  esac
+  echo "NOTE: gitleaks is not installed, so the pre-commit secret check uses" >&2
+  echo "  only its built-in patterns. Install it with: $gitleaks_install" >&2
+fi
 
 mkdir -p ~/bin ~/.ssh
 chmod 700 ~/.ssh

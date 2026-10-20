@@ -13,8 +13,10 @@ Here are the bash, zsh, gitconfig, related dotfiles for rfay.
 
 This repo is public. `link.sh` sets `core.hooksPath` so that
 `githooks/pre-commit` refuses commits that add token-shaped strings, private
-keys, or files such as `.claude.json`. It uses `gitleaks` as well when that
-is installed. For a false positive, commit with `--no-verify`.
+keys, or files such as `.claude.json`. It also runs `gitleaks` when that is
+installed, and `link.sh` says how to install it when it isn't;
+`.gitleaks.toml` excludes the vendored `.oh-my-zsh`. For a false positive,
+commit with `--no-verify`.
 
 `link.sh` is safe to re-run any time (e.g. after `git pull`, or after adding a
 new item to `LINKITEMS`) — it never overwrites something it doesn't recognize

@@ -1,0 +1,8 @@
+# Read by gitleaks when githooks/pre-commit runs it from the repo root.
+[extend]
+useDefault = true
+
+# .oh-my-zsh is vendored upstream code; its docs contain example
+# credentials that the default rules flag.
+[allowlist]
+paths = ['''^\.oh-my-zsh/''']
