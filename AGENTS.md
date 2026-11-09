@@ -23,6 +23,9 @@ breaking a machine. When behavior changes, update `README.md` too.
   any `~/.claude-<profile>/skills/`). These are global Claude Code skills;
   they live outside `.claude/` so they don't also load as project skills
   here. Keep repo-specific rules in that repo's own skills, not these.
+- Symlinks `claude/CLAUDE.md` as `CLAUDE.md` in the same directories. It
+  replaces an identical file there, and leaves a different one alone with a
+  warning.
 
 **Edit files in the repo, never the linked or injected copies in `$HOME`.**
 When a setting has to differ per machine, prefer a `link.sh` step that writes

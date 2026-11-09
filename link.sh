@@ -292,4 +292,29 @@ link_claude_skills() {
 
 link_claude_skills
 
+# Global Claude Code instructions, linked into the same config directories.
+# An existing file with the same content is replaced by the link; one that
+# differs is left alone, so instructions written on this machine aren't lost.
+link_claude_md() {
+  local config_dir target src="$DIR/claude/CLAUDE.md"
+  for config_dir in "$HOME/.claude" "$HOME"/.claude-*/; do
+    config_dir=${config_dir%/}
+    [ -d "$config_dir" ] || continue
+    target="$config_dir/CLAUDE.md"
+    [ -L "$target" ] && continue
+    if [ -e "$target" ]; then
+      if ! cmp -s "$target" "$src"; then
+        echo "WARNING: $target differs from claude/CLAUDE.md; leaving it alone." >&2
+        echo "  Merge it into the repo copy, remove it, and re-run link.sh." >&2
+        continue
+      fi
+      rm "$target"
+    fi
+    ln -s "$src" "$target"
+    echo "Linked claude/CLAUDE.md into $config_dir"
+  done
+}
+
+link_claude_md
+
 echo "Consider also adding $NOLINKITEMS"

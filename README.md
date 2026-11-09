@@ -445,6 +445,13 @@ example, defers to the `ddev-commit` skill inside ddev and ddev.com.
 To add a skill, create `claude/skills/<name>/SKILL.md` and re-run `link.sh`.
 Edits to existing skills take effect immediately through the symlink.
 
+`claude/CLAUDE.md` holds global instructions for every project, such as the
+branch naming convention and pushing ddev branches to the `rfay` fork.
+`link.sh` links it as `CLAUDE.md` in the same config directories. An existing
+`CLAUDE.md` with the same content is replaced by the link. One that differs
+is left alone with a warning: merge it into `claude/CLAUDE.md`, remove it,
+and re-run `link.sh`.
+
 ## Prerequisites
 
 Consider installing:
