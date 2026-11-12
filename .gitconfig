@@ -13,20 +13,19 @@
 	#sshCommand = ssh.exe
 
 [push]
-	default = tracking
+	default = simple
 	autoSetupRemote = true
-	autoSetupRemote = true
-[color]
-	status = auto
-	branch = auto
-	interactive = auto
-	diff = auto
+	followTags = true
 [merge]
         keepBackup = false
 	tool = p4merge
+	conflictstyle = zdiff3
 [diff]
 	tool = goland
 	renameLimit = 10909
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
 [difftool]
 ; This setting is optional, but prevents an annoying prompt between diffing files.
 	prompt = false
@@ -52,17 +51,26 @@
 	submoduleSummary = true
 [fetch]
 	recurseSubmodules = on-demand
-[hub]
-	protocol = ssh
-[filesystem "Oracle Corporation|13.0.1|/dev/disk1s5"]
-	timestampResolution = 10000 nanoseconds
-	minRacyThreshold = 0 nanoseconds
+	prune = true
+	all = true
 [init]
 	defaultBranch = main
 [pull]
 	rebase = true
+[rebase]
+	autoSquash = true
+	autoStash = true
 [commit]
 	gpgsign = true
+	verbose = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
+[help]
+	autocorrect = prompt
 [gpg "ssh"]
 	allowedSignersFile = ~/.ssh/allowed_signers
 [user]
@@ -73,10 +81,6 @@
 
 [gpg "ssh"]
   program = "op-ssh-sign"
-
-[commit]
-  gpgsign = true
-
 
 [rerere]
 	enabled = true
