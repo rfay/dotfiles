@@ -12,19 +12,18 @@
 	eol = lf
 
 [push]
-	default = tracking
+	default = simple
 	autoSetupRemote = true
-	autoSetupRemote = true
-[color]
-	status = auto
-	branch = auto
-	interactive = auto
-	diff = auto
+	followTags = true
 [merge]
         keepBackup = false
 	tool = p4merge
+	conflictstyle = zdiff3
 [diff]
 	tool = goland
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
 [difftool]
 ; This setting is optional, but prevents an annoying prompt between diffing files.
 	prompt = false
@@ -52,20 +51,23 @@
 	submoduleSummary = true
 [fetch]
 	recurseSubmodules = on-demand
-[hub]
-	protocol = ssh
-[filter "lfs"]
-	smudge = git-lfs smudge -- %f
-	required = true
-	clean = git-lfs clean -- %f
-	process = git-lfs filter-process
-[filesystem "Oracle Corporation|13.0.1|/dev/disk1s5"]
-	timestampResolution = 10000 nanoseconds
-	minRacyThreshold = 0 nanoseconds
+	prune = true
+	all = true
 [init]
 	defaultBranch = main
 [pull]
 	rebase = true
+[rebase]
+	autoSquash = true
+	autoStash = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
+[help]
+	autocorrect = prompt
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -81,17 +83,12 @@
 [gpg]
   format = ssh
 
-[user]
-  signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVC6j7OrO0FRP5k8Hxl6RLKMaQeB+I+MtPVKvG4QmfHUnwMHcp1yd3Q8wN7gdEhmt/9Ht1Dr3Uow5SJBi4wttflPJJ1MjxXFqiQYiVQ0T8f2yX77U2VtpDVYe9+A44xnLXJLzl11D/WRb69GL9z+hyceEM9hV1i+nX3xrw8x+z2bf96f0E2w8dBWVjsCWh9YGA4dmMgtgQpJt86hvMMSHxxPeuiJg/wY4BSLoo1i19V/VOnLhG/NroOVcKnGYH/RX/UPDVGSfwFC6yFm51fhNRM1LTdrHrBa8RkbWhDxBm+ECUhEXoeDx4Q5STKOnznsWDktP1XVC67vOkdQAHL5hLVGqt9MTB1cV+T2hGXR0iUYK22OKMt1oLcm9rp1rOZctZSDFj1Cc+5+svK82xv3tYIBegw5YbrLQX/fGqJ8gnCIDIhL2Uc16B3kEdrGTs0Ks0qWlsA0CbKAmsW/Mjf1aEMr2KIsd/lfNqoLP6NSdyPtlXxT56TAIbOP1glSzoLsibwqbD9SJqAoFl4iDPB9RyK00QlQgAgEUrvWpPu/U+o4K7+ajBpssIskmK+wZ+JKDxqotVd99cJkxhWF02l+WsiqSw6VFFtCiXuTiJEoTe5nARWJbXdXoXAAQ+Sd7wIc/47ov0IqoiuJ4NbIafL8BmAzB/oUkRPfKac16jHp4LNw==
-
-[gpg]
-  format = ssh
-
 [gpg "ssh"]
   program = "/mnt/c/Users/rfay/AppData/Local/Microsoft/WindowsApps/op-ssh-sign-wsl.exe"
 
 [commit]
   gpgsign = true
+  verbose = true
 
 [include]
 	path = ~/.gitconfig.local
