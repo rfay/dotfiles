@@ -317,4 +317,47 @@ link_claude_md() {
 
 link_claude_md
 
+# Global Claude Code permission rules. Claude Code writes settings.json itself,
+# so it can't be a link: add each rule from claude/permissions.json that the
+# file lacks to its permissions.allow, and keep everything else in it.
+merge_claude_permissions() {
+  local config_dir target merged ok src="$DIR/claude/permissions.json"
+  if command -v jq >/dev/null 2>&1; then :
+  elif command -v python3 >/dev/null 2>&1; then :
+  else
+    echo "WARNING: neither jq nor python3 is installed; claude/permissions.json was not applied." >&2
+    return 0
+  fi
+  for config_dir in "$HOME/.claude" "$HOME"/.claude-*/; do
+    config_dir=${config_dir%/}
+    [ -d "$config_dir" ] || continue
+    target="$config_dir/settings.json"
+    [ -e "$target" ] || echo '{}' > "$target"
+    ok=1
+    if command -v jq >/dev/null 2>&1; then
+      merged=$(jq --slurpfile add "$src" '
+        .permissions.allow = reduce $add[0].permissions.allow[] as $rule
+          (.permissions.allow // []; if any(.[]; . == $rule) then . else . + [$rule] end)
+      ' "$target" 2>/dev/null) || ok=0
+    else
+      merged=$(python3 -c '
+import json, sys
+settings = json.load(open(sys.argv[1]))
+allow = settings.setdefault("permissions", {}).setdefault("allow", [])
+allow += [r for r in json.load(open(sys.argv[2]))["permissions"]["allow"] if r not in allow]
+print(json.dumps(settings, indent=2))
+' "$target" "$src" 2>/dev/null) || ok=0
+    fi
+    if [ "$ok" = 0 ] || [ -z "$merged" ]; then
+      echo "WARNING: could not update $target; is it valid JSON? Leaving it alone." >&2
+    elif [ "$merged" != "$(cat "$target")" ]; then
+      # Writing in place keeps the file's permissions, and a symlink stays a symlink.
+      printf '%s\n' "$merged" > "$target"
+      echo "Added claude/permissions.json rules to $target"
+    fi
+  done
+}
+
+merge_claude_permissions
+
 echo "Consider also adding $NOLINKITEMS"

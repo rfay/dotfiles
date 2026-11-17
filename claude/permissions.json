@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker pull mcr.microsoft.com/playwright:*)",
+      "Bash(docker run --rm --network ddev_default:*)"
+    ]
+  }
+}

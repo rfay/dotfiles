@@ -452,6 +452,14 @@ branch naming convention and pushing ddev branches to the `rfay` fork.
 is left alone with a warning: merge it into `claude/CLAUDE.md`, remove it,
 and re-run `link.sh`.
 
+`claude/permissions.json` holds global Claude Code permission rules, such as
+allowing the Playwright container on DDEV's `ddev_default` network for browser
+checks of DDEV sites. Claude Code writes `settings.json` itself, so `link.sh`
+doesn't link it: it adds any rule the file lacks to `permissions.allow` and
+keeps everything else. It needs `jq` or `python3`. To add a rule, put it in
+`claude/permissions.json` and re-run `link.sh`. Removing a rule from the repo
+doesn't remove it from `settings.json`; delete it there by hand.
+
 ## Prerequisites
 
 Consider installing:

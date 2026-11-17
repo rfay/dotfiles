@@ -26,6 +26,11 @@ breaking a machine. When behavior changes, update `README.md` too.
 - Symlinks `claude/CLAUDE.md` as `CLAUDE.md` in the same directories. It
   replaces an identical file there, and leaves a different one alone with a
   warning.
+- Adds the rules in `claude/permissions.json` to `permissions.allow` in each
+  of those directories' `settings.json`, using `jq` or else `python3`. Claude
+  Code writes `settings.json` itself, so it is merged, never linked; rules and
+  settings already there are kept, and a file that isn't valid JSON is left
+  alone with a warning.
 
 **Edit files in the repo, never the linked or injected copies in `$HOME`.**
 When a setting has to differ per machine, prefer a `link.sh` step that writes
