@@ -320,7 +320,10 @@ container.
 
 Commit signing in `.gitconfig-wsl2` still uses 1Password's Windows
 `op-ssh-sign-wsl.exe`, which talks to 1Password directly and doesn't need
-the bridge.
+the bridge. Git reaches it through `bin/op-ssh-sign-wsl.sh`, which hands
+signing to the `.exe` and signature checks (`git log --show-signature`,
+`git verify-commit`) to Linux `ssh-keygen`, because the Windows program
+can't open `~/.ssh/allowed_signers`.
 
 If `ssh-add -l` fails, check the unit first. `journalctl --user -u
 1password-wsl2-bridge.service` shows its log; a unit that runs but can't

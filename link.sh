@@ -12,7 +12,7 @@
 
 set -o errexit
 
-LINKITEMS=".gitconfig .gitconfig.linux .gitconfig-wsl2 .gitignore .oh-my-zsh .ssh/allowed_signers bin/cc-as.sh bin/cc-remote-control.sh bin/code-as.sh bin/brewlink_ddev.sh bin/relink_ddev.sh bin/switchcompose.sh bin/unlink_ddev.sh bin/wsl2setup.sh"
+LINKITEMS=".gitconfig .gitconfig.linux .gitconfig-wsl2 .gitignore .oh-my-zsh .ssh/allowed_signers bin/cc-as.sh bin/cc-remote-control.sh bin/code-as.sh bin/brewlink_ddev.sh bin/relink_ddev.sh bin/switchcompose.sh bin/unlink_ddev.sh bin/wsl2setup.sh bin/op-ssh-sign-wsl.sh"
 NOLINKITEMS=".bash_sshagent"
 
 # target (relative to $HOME) -> source (relative to this repo)

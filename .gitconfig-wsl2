@@ -84,7 +84,9 @@
   format = ssh
 
 [gpg "ssh"]
-  program = "/mnt/c/Users/rfay/AppData/Local/Microsoft/WindowsApps/op-ssh-sign-wsl.exe"
+  # Signs with 1Password's op-ssh-sign-wsl.exe, verifies with ssh-keygen.
+  program = ~/bin/op-ssh-sign-wsl.sh
+  allowedSignersFile = ~/.ssh/allowed_signers
 
 [commit]
   gpgsign = true
