@@ -52,7 +52,6 @@
 [fetch]
 	recurseSubmodules = on-demand
 	prune = true
-	all = true
 [init]
 	defaultBranch = main
 [pull]
