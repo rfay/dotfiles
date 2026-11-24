@@ -49,12 +49,28 @@ Guard anything platform-specific with a check for the thing it needs:
 Never hardcode `/Users/rfay`, `/home/rfay`, or `C:\...` in a shared file;
 use `~` or `$HOME`.
 
-`.gitconfig` is shared by all of them. Machine-specific git settings go in
-`~/.gitconfig.local`, which `.gitconfig` includes last. That file is real and
-per-machine; the tracked `.gitconfig.local.example` is only a commented
-template and is not linked. `.gitconfig.linux` is pulled in by
-`includeIf "gitdir:/home/"`, which only fires inside a repo — it does not
-apply to `git clone` or to commands run outside a repo.
+There are two global git configs, so **a git setting change goes in both
+`.gitconfig` and `.gitconfig-wsl2`**:
+
+- `.gitconfig` is used on macOS, Windows, and Linux other than WSL2.
+  `.gitconfig.linux` adds to it through `includeIf "gitdir:/home/"`, which
+  only fires inside a repo — it does not apply to `git clone` or to commands
+  run outside a repo.
+- `.gitconfig-wsl2` is used instead on WSL2, where `shell/bash_profile` sets
+  `GIT_CONFIG_GLOBAL` to it. It does not include `.gitconfig`.
+
+Both include `~/.gitconfig.local` last, for machine-specific settings. That
+file is real and per-machine; the tracked `.gitconfig.local.example` is only a
+commented template and is not linked.
+
+Commit signing differs by platform:
+
+- macOS and Windows: `gpg.ssh.program = "op-ssh-sign"`, found on PATH (on
+  Windows, in `%LOCALAPPDATA%\Microsoft\WindowsApps`).
+- WSL2: `bin/op-ssh-sign-wsl.sh`, which sends signing to 1Password's
+  `op-ssh-sign-wsl.exe` and verification to Linux `ssh-keygen`.
+- Other Linux: `.gitconfig.linux` turns signing off, since most of these
+  hosts don't have the key. `~/.gitconfig.local` turns it back on per host.
 
 ## Windows / Git Bash
 
@@ -73,11 +89,9 @@ These all broke on a Git reinstall and took diagnosis to fix:
   `shell/bash_profile` puts Windows OpenSSH first on PATH for interactive
   ssh, and `link.sh` sets `core.sshCommand` in `~/.gitconfig.local` for git
   run outside Git Bash (VS Code, PowerShell).
-- **Commit signing** uses `gpg.ssh.program = "op-ssh-sign"`, found on PATH
-  on every platform (on Windows, in `%LOCALAPPDATA%\Microsoft\WindowsApps`).
-  1Password's "set up signing" can rewrite this in `.gitconfig` to an
-  absolute `C:\...\op-ssh-sign.exe` path. **Never commit that;** revert it
-  with `git checkout -- .gitconfig`.
+- **Commit signing.** 1Password's "set up signing" can rewrite
+  `gpg.ssh.program` in `.gitconfig` to an absolute `C:\...\op-ssh-sign.exe`
+  path. **Never commit that;** revert it with `git checkout -- .gitconfig`.
 - **Symlinks** are only real under `MSYS=winsymlinks:nativestrict` with
   Developer Mode or an elevated shell; otherwise `ln -s` silently copies.
 
@@ -100,9 +114,8 @@ git ls-remote origin HEAD    # git's own ssh path
 ```
 
 On Windows, repeat the `git` check from PowerShell to cover git outside Git
-Bash. To check signing, make an empty commit in a throwaway repo under the
-scratch directory and run `git log --show-signature -1`; never test by
-committing here.
+Bash. To check signing, make an empty commit in a throwaway repo under
+`~/tmp` and run `git log --show-signature -1`; never test by committing here.
 
 ## Secrets
 
@@ -124,27 +137,40 @@ confirmation before running them, since they discard both.
   private keys, or files like `.claude.json`; `link.sh` turns it on with
   `core.hooksPath`. Don't bypass it with `--no-verify` unless the user
   confirms the match is a false positive.
+- **Never run a command that prints a credential**, such as `gh auth token`
+  or `git credential fill`, even to check that one exists. Output can end up
+  in a commit message, a log, or this public repo.
 
 ## Git workflow
 
-**Commit locally, never publish.** Commit when asked, directly on the current
-branch. **Never run `git push`, and don't offer to** — finish at the commit.
+This is rfay's own repo, so agents may push to it. Commit when asked,
+directly on `main`, and push `main` to `origin` with a plain `git push`.
+Don't open a PR, and never force-push `main` or push with `--no-verify`.
+If the push is rejected because `origin/main` moved, run `git pull` (which
+rebases) and push again; stop and ask if the rebase conflicts.
 
 Commit subjects are a short imperative sentence with no Conventional Commits
 prefix, for example `Use Windows OpenSSH in git-bash so 1Password's SSH agent
 works`. The body says why.
 
+Pass commit messages through a file: write the text with the editor tool,
+then `git commit -F <file>`. Don't use `-m` with a heredoc or `bash -c "..."`,
+where backticks and `$(...)` inside the message run as commands.
+
 ## English language usage
 
 These apply everywhere: conversation, commit messages, code, and comments.
 
-**Never use:** `comprehensive`, `seamless`, `genuine`, `genuinely`,
-`honest`, `honestly`, `truly`, `really` (as an intensifier), `perfect`,
-`perfectly`, `robust`, `powerful`, `effortless`, `production-ready`,
-`delve`, `elevate`, `unleash`.
+**Never use any of these, in any form:** `comprehensive`, `seamless`,
+`genuine`, `genuinely`, `honest`, `honestly`, `truly`, `really` (as an
+intensifier), `perfect`, `perfectly`, `robust`, `powerful`, `effortless`,
+`production-ready`, `delve`, `elevate`, `unleash`, `to be honest`, `in all
+honesty`, `for real`. They assert importance instead of demonstrating it:
+delete the word, and if that changes the meaning, the claim needed evidence.
 
 Don't compliment or validate the reader; lead with the substance. Report
 results plainly: if something failed, was skipped, or is unverified, say so.
 
 Comments say why, not what, and stay short; longer reasoning belongs in the
-commit message.
+commit message. Describe what is true now, not what changed: "moved from X"
+goes stale.
