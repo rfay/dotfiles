@@ -3,6 +3,12 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 [ -d /home/linuxbrew/.linuxbrew ] && export PATH=/usr/local/bin:$HOME/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/curl/bin:$PATH
 [ -d /opt/homebrew/bin ] && export PATH="/usr/local/bin:$HOME/bin:/opt/homebrew/bin:/opt/homebrew/opt/curl/bin:$PATH"
 
+# ddev/ddev docs tools (scripts/install-dev-tools.sh). node/bin goes ahead of
+# Homebrew so its linters win; python/bin is a venv with its own python/pip,
+# so it goes last to avoid shadowing the system Python.
+[ -d "$HOME/.ddev-dev-tools/node/bin" ] && export PATH="$HOME/.ddev-dev-tools/node/bin:$PATH"
+[ -d "$HOME/.ddev-dev-tools/python/bin" ] && export PATH="$PATH:$HOME/.ddev-dev-tools/python/bin"
+
 # zsh completions
 if type brew &>/dev/null; then
     # Only add this to FPATH if it actually exists: a missing dir under the

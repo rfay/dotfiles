@@ -87,6 +87,12 @@ fi
 # Created by `pipx` on 2025-03-23 17:41:41
 export PATH="$PATH:${HOME}/.local/bin"
 
+# ddev/ddev docs tools (scripts/install-dev-tools.sh). node/bin goes ahead of
+# Homebrew so its linters win; python/bin is a venv with its own python/pip,
+# so it goes last to avoid shadowing the system Python.
+[ -d "$HOME/.ddev-dev-tools/node/bin" ] && export PATH="$HOME/.ddev-dev-tools/node/bin:$PATH"
+[ -d "$HOME/.ddev-dev-tools/python/bin" ] && export PATH="$PATH:$HOME/.ddev-dev-tools/python/bin"
+
 if [ -d ${HOME}/.rd ]; then export PATH="$PATH:${HOME}/.rd/bin"; fi
 
 for p in "/Applications/1Password.app/Contents/MacOS/" "/mnt/c/Users/randy/AppData/Local/1Password/app/8/" "/opt/1Password"; do
